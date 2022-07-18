@@ -1,6 +1,4 @@
-package br.com.formulario.VIEW;
-
-import java.text.ParseException;
+package br.com.formulario.validations;
 
 public class Validation {
 	private static final char [] NUMBERS = 
@@ -47,10 +45,6 @@ public class Validation {
 		return false;
 	}
 
-	public static boolean haveOneChar(String character) {
-		return character.length() == 1;
-	}
-
 	public static boolean haveOnlyNumber(String number) {
 		String numberWithoutSpaces = removeSpaces(number);
 		return haveOnlyNumber(numberWithoutSpaces, 0);
@@ -90,11 +84,12 @@ public class Validation {
 			}
 		}
 		return false;
-	} // FIXINGGGGGG
+	} 
 
 	private static boolean lessThan(String number, int limit) {
 		try {
-			return Integer.parseInt(number) <= limit;
+			int parsedNumber = Integer.parseInt(number);
+			return parsedNumber < limit && parsedNumber > 0;
 		}
 		catch (NumberFormatException e) {
 			return false;
@@ -104,7 +99,10 @@ public class Validation {
 	public static boolean isCPF(String cpf) {
 		return haveOnlyNumber(cpf) && cpf.length() == 11;
 	}
-
+	
+	public static boolean isFiled(String text) {
+		return !(text.isEmpty());
+	}
 
 
 }

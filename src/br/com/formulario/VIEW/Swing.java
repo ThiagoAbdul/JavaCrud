@@ -14,18 +14,26 @@ import javax.swing.JTextField;
 
 import br.com.formulario.DAO.PessoaDAO;
 import br.com.formulario.DTO.Pessoa;
+import static br.com.formulario.validations.Validation.*;
+
+import javax.swing.JRadioButton;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import javax.swing.ButtonGroup;
 
 
 public class Swing {
 
 	private JFrame frame;
 	private JTextField txtNome;
-	private JTextField txtSexo;
+	private JRadioButton btnMale;
+	private JRadioButton btnFemale;
 	private JTextField txtDataNascimento;
 	private JLabel lblAlert;
 	SimpleDateFormat sdf;
 	private JLabel lblCpf;
 	private JTextField txtCPF;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	/**
 	 * Launch the application.
@@ -80,17 +88,22 @@ public class Swing {
 		JLabel lblSexo = new JLabel("Sexo");
 		lblSexo.setBounds(28, 110, 202, 15);
 		frame.getContentPane().add(lblSexo);
-
-		txtSexo = new JTextField();
-		txtSexo.setBounds(28, 125, 202, 19);
-		frame.getContentPane().add(txtSexo);
-		txtSexo.setColumns(10);
+		
+		btnMale = new JRadioButton("M", false);
+		buttonGroup.add(btnMale);
+		btnMale.setBounds(28, 125, 50, 19);
+		frame.getContentPane().add(btnMale);
+		
+		btnFemale = new JRadioButton("F", false);
+		buttonGroup.add(btnFemale);
+		btnFemale.setBounds(78, 125, 50, 19);;
+		frame.getContentPane().add(btnFemale);
 
 		JLabel lblDataDeNascimento = new JLabel("Data de nascimento");
 		lblDataDeNascimento.setBounds(28, 155, 202, 15);
 		frame.getContentPane().add(lblDataDeNascimento);
 
-		txtDataNascimento = new JTextField();
+		txtDataNascimento = new JTextField("0/0/0000");
 		txtDataNascimento.setBounds(28, 170, 202, 19);
 		frame.getContentPane().add(txtDataNascimento);
 		txtDataNascimento.setColumns(10);
@@ -101,13 +114,12 @@ public class Swing {
 			public void actionPerformed(ActionEvent e) {
 				String inputNome = txtNome.getText();
 				String inputCpf = txtCPF.getText();
-				String inputSexo = txtSexo.getText();
+				String inputSexo = getValueSelected();
 				String inputDataNascimento = txtDataNascimento.getText();
-
-				if (Validation.haveOnlyLetters(inputNome) && 
-					Validation.isCPF(inputCpf) &&
-					Validation.haveOneChar(inputSexo) && 
-					Validation.isDate(inputDataNascimento)) {
+				if (haveOnlyLetters(inputNome) && 
+					isCPF(inputCpf) &&
+					isFiled(inputSexo) &&
+					isDate(inputDataNascimento)) {
 						String nome = inputNome.toLowerCase();
 						String cpf = inputCpf;
 						char sexo = inputSexo.charAt(0);
@@ -115,23 +127,19 @@ public class Swing {
 						sdf = new SimpleDateFormat("dd/MM/yyyy");
 						try {
 							dataNascimento = sdf.parse(inputDataNascimento);
-						} catch (ParseException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-							alertError("Formatação de nome inválida");
+						} catch (ParseException ex) {
+							ex.printStackTrace();
+							alert("Formatação de data inválida");
 							return;
 						}
 						Pessoa pessoa = new Pessoa(cpf, nome, sexo, dataNascimento);
 						PessoaDAO dao = new PessoaDAO();
 						dao.save(pessoa);
+						alert("Enviado com sucesso!");
 				}
 				else {
-					alertError("Formatação de nome inválida");
+					alert("Erro no preenchimento dos dados");
 				}
-
-
-
-
 			}
 		});
 		btnSalvar.setBounds(28, 195, 117, 25);
@@ -142,11 +150,21 @@ public class Swing {
 		frame.getContentPane().add(lblAlert);
 		
 		
+		
+		
 	}
 
-	public void alertError(String text) {
+	public void alert(String text) {
 		lblAlert.setText(text);
 	}
-
-
+	public String getValueSelected() {
+		if (btnMale.isSelected()) {
+			return btnMale.getText();
+		}
+		else if (btnFemale.isSelected()){
+			return btnFemale.getText();
+		}
+		return "";
+	}
+	
 }

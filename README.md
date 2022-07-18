@@ -1,2 +1,2 @@
 # JavaCrud
-Um cadastro de usuario paa o mysql
+Um cadastro de usuario para o mysql
